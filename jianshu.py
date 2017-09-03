@@ -43,16 +43,46 @@ def getPage(url):#获取链接中的网页内容
             page = response.read().decode('utf-8')
             return page
 
+#输入作者姓名，获取作者信息
 def getUrl():
     userlink = []
     while len(userlink) == 0:
-        url = raw_input('请输入想查询的作者的主页链接：')
-        pattern = re.compile(u'http:\/\/www\.jianshu\.com\/u\/(.*?$)')
-        userlink = re.findall(pattern,url)
-        if len(userlink):
-            return userlink[0]
+        authorname = raw_input('请输入想查询的作者的名称：')
+        url = "http://www.jianshu.com/search/do?q=" + authorname +"&type=user&page=1&order_by=default"
+        headers = {
+            'User-agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
+            'Host' : 'www.jianshu.com',
+            'Accept' : 'application/json',
+            'Accept-Language' : 'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding' : 'gzip, deflate',
+            'Referer' : 'http://www.jianshu.com/search?q=' + authorname +'&page=1&type=user',
+            'Cookie' : '_ga=GA1.2.1736258426.1504198414; _gid=GA1.2.1558784275.1504198414; Hm_lvt_0c0e9d9b1e7d617b3e6842e85b9fb068=1504198414,1504266340; signin_redirect=http%3A%2F%2Fwww.jianshu.com%2Fsearch%3Fq%3D%25E5%25BD%25AD%25E5%25B0%258F%25E5%2585%25AD%26page%3D1%26type%3Duser; _maleskine_session=aDJTSDJiNWY0NXZEQWxCVTlwbU9zNTJOc21WbXBFVFpGRHdWYkNsbitwYnlsT2J3NHFaWDlxMVVsZnd0TktyVVovcnZ2S0NDd2lubHlodGFqVHpvVGFNd2xXL1B6aW9kNEp3d2JWWlZxYWVyaFUyS3hSWW5ONmNOaUJqMnNGbWx0V1NLdjJsUW90TzZibTJ1UVdOaytYVmF5NHIvSmVJRWxTWU9wSXZqeS9MVzYrRXJzdmx5dUhaSENpeTZEeGo5OUVxQVlDL3NvSENzUTF5ZzdiQXJqMmtucyszZVVweFMyampzOW5ETFpyYjYxSVBDamowV0EvRVJBRWQrMFhOallXN3ByR21ERmljYlMrZHZGVDVXYk1Wd2RtanU0YzdBUXJFTjJwM1ZZTi85TlVBejE1ZlJOWEhhL0dSUmZnMzhESVJtWnBmMXl0MGdpS1NOdDJObU1RPT0tLURWN3VzU3JtY3lQMm1meFpNajZlc2c9PQ%3D%3D--2e070a045963a4896fbdc89c36fe1fcfc804a240; Hm_lpvt_0c0e9d9b1e7d617b3e6842e85b9fb068=1504266395',
+            'DNT' : '1',
+            'Connection' : 'keep-alive',
+            'If-None-Match' : 'W/"89003709c764d0a3ece1d180f5d1c7df"',
+            'Cache-Control' :'max-age=0'
+        }
+        json_data = requests.get(url = url ,headers = headers).json()
+        for i in json_data['entries']:
+            nickname = i['nickname']
+            slug = i['slug']
+            if nickname == authorname:
+                return slug
+                break
         else:
-            print '输入的url不符合要求，请重新输入。'#获取作者唯一标识link
+            print '输入的作者名称不符合规范，请重新输入。'
+
+#原获取方式，输入作者主页链接，获取作者信息            
+# def getUrl():
+#     userlink = []
+#     while len(userlink) == 0:
+#         url = raw_input('请输入想查询的作者的主页链接：')
+#         pattern = re.compile(u'http:\/\/www\.jianshu\.com\/u\/(.*?$)')
+#         userlink = re.findall(pattern,url)
+#         if len(userlink):
+#             return userlink[0]
+#         else:
+#             print '输入的url不符合要求，请重新输入。'#获取作者唯一标识link
 
 def getAuthorinf(page): #得到作者的姓名与头像链接
     pattern1 = re.compile(u'<img.*?src="/(.*?)\?.*?".*?alt="240".*?>.*?')
@@ -241,7 +271,7 @@ def main():
     articlelist = []
     pageNum = 1
     userlink = getUrl()
-    titlePage = getPage('http://www.jianshu.com/u/' + userlink)
+    titlePage = getPage("http://www.jianshu.com/u/" + userlink)
     authorname,articleMax = getAuthorinf(titlePage)
     pageMax = articleMax / 9 + 1
     articleNum = 1
