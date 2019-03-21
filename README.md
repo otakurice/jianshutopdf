@@ -5,7 +5,7 @@
 - 将简书作者的文章整理后生成为pdf
 
 #### 博客
-- 代码可结合简书博客阅读：https://mp.weixin.qq.com/s/hkuBcrvLF1hx9U8OR-s2Cw
+- 代码可结合博客阅读：https://mp.weixin.qq.com/s/hkuBcrvLF1hx9U8OR-s2Cw
 
 #### 关于我
 - 一个特别擅长不务正业的人
